@@ -1,5 +1,5 @@
 ﻿using FastTechFoods.Customer.Infrastructure.Repository;
-using FastTechFoods.Customer.Worker;
+using FastTechFoods.Customer.Worker.Consumers;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,39 +7,42 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration(config =>
+    {
+        config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+    })
     .ConfigureServices((hostContext, services) =>
     {
-        // Configurar DbContext
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(
-                hostContext.Configuration.GetConnectionString("ConnectionString")
-            )
-        );
+        var configuration = hostContext.Configuration;
 
-        // Configurar MassTransit + RabbitMQ
+        // DbContext
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("ConnectionString")));
+
+        // MassTransit + RabbitMQ
         services.AddMassTransit(x =>
         {
-            x.AddConsumer<OrderCreatedConsumer>();
+            x.AddConsumer<MenuItemConsumer>();
 
             x.UsingRabbitMq((context, cfg) =>
             {
-                var rmq = hostContext.Configuration.GetSection("MassTransit_CustomerOrderCreated");
-                cfg.Host(rmq["Servidor"], h =>
+                var section = configuration.GetSection("MassTransit_CreateItemMenu");
+
+                cfg.Host(section["Servidor"], h =>
                 {
-                    h.Username(rmq["Usuario"]);
-                    h.Password(rmq["Senha"]);
+                    h.Username(section["Usuario"]);
+                    h.Password(section["Senha"]);
                 });
 
-                cfg.ReceiveEndpoint(rmq["NomeFila"], e =>
+                cfg.ReceiveEndpoint(section["NomeFila"], e =>
                 {
-                    e.ConfigureConsumer<OrderCreatedConsumer>(context);
+                    e.ConfigureConsumer<MenuItemConsumer>(context);
                 });
             });
         });
-        services.AddMassTransitHostedService();
 
-        // Registrar Consumer
-        services.AddScoped<OrderCreatedConsumer>();
+        services.AddMassTransitHostedService();
+        services.AddScoped<MenuItemConsumer>();
     })
     .Build()
     .Run();

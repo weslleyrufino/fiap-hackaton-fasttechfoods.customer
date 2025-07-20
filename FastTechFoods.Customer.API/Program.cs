@@ -204,12 +204,8 @@ app.UseExceptionHandler(errorApp =>
 //     app.UseSwaggerUI();
 // }
 //
-app.UseStaticFiles();
 app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.InjectStylesheet("/swagger-ui/custom.css");
-});
+app.UseSwaggerUI();
 
 //app.UseHttpsRedirection();
 app.UseAuthentication();
