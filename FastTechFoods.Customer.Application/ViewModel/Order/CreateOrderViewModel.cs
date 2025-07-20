@@ -11,5 +11,5 @@ public class CreateOrderViewModel
     public EnumDeliveryMethod DeliveryMethod { get; set; }
 
     [Required]
-    public List<OrderItemViewModel> Items { get; set; } = new();
+    public List<CreateOrderItemViewModel> Items { get; set; } = new();
 }

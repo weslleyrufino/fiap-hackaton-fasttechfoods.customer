@@ -16,7 +16,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     private readonly ILogger<OrdersController> _logger = logger;
 
     [HttpPost("CreateOrder")]
-    public async Task<IActionResult> PostCreateOrder([FromBody] CreateOrderViewModel orderViewModel)
+    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderViewModel orderViewModel)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -27,15 +27,15 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
 
     }
 
-    [HttpGet("GetOrderById")]
-    public async Task<IActionResult> GetOrderByIdAsync()
+    [HttpGet("GetOrderByCustomerId")]
+    public async Task<IActionResult> GetOrderByCustomerIdAsync()
     {
         var customerId = User.GetCustomerId();
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = await _orderService.GetOrderByIdAsync(customerId);
+        var result = await _orderService.GetOrderByCustomerIdAsync(customerId);
 
         if (result is null)
             return NotFound("No order found.");
@@ -50,10 +50,10 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var orderFromDB = await _orderService.GetOrderByIdAsync(orderViewModel.Id);
+        var orderFromDB = await _orderService.GetOrderByCustomerIdAsync(orderViewModel.Id);
 
         if (orderFromDB is null)
-            return NotFound("Order does not exist.");
+            return NoContent();
 
         if (orderFromDB.Status == EnumStatus.Accepted)
             return BadRequest("Not possible to cancel the order.");

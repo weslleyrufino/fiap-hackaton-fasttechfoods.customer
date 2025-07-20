@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FastTechFoods.Customer.Infrastructure.Repository;
 public class OrderRepository(ApplicationDbContext context) : EFRepository<Order>(context), IOrderRepository
 {
-    public async Task<Order?> GetOrderByIdAsync(Guid id)
+    public async Task<Order?> GetOrderByCustomerIdAsync(Guid id)
     {
         return await _dbSet
             .AsNoTracking()

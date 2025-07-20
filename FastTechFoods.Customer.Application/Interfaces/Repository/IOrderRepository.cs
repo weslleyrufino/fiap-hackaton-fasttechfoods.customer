@@ -4,5 +4,5 @@ namespace FastTechFoods.Customer.Application.Interfaces.Repository;
 public interface IOrderRepository : IRepository<Order>
 {
     Task<IEnumerable<Order>> GetAllOrdersAsync();
-    Task<Order?> GetOrderByIdAsync(Guid id);
+    Task<Order?> GetOrderByCustomerIdAsync(Guid id);
 }

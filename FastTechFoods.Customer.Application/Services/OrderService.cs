@@ -1,5 +1,6 @@
 ﻿using FastTechFoods.Customer.Application.Common;
 using FastTechFoods.Customer.Application.ExtensionMethods;
+using FastTechFoods.Customer.Application.ExtensionMethods.Event;
 using FastTechFoods.Customer.Application.Interfaces.Repository;
 using FastTechFoods.Customer.Application.Interfaces.Services;
 using FastTechFoods.Customer.Application.ViewModel.Order;
@@ -20,21 +21,21 @@ public class OrderService(ISendEndpointProvider sendEndpointProvider, IConfigura
 
     public async Task CreateOrderAsync(CreateOrderViewModel requestOrder)
     {
-        // Insert na base de dados. 
-        await _orderRepository.InsertAsync(requestOrder.ToModel());
+        var order = requestOrder.ToModel();
 
-        // Se gravou com sucesso, colocar a mensagem da fila do rabbitmq
-        await RabbitMqHelper.SendMessageAsync(_sendEndpointProvider, _configuration, requestOrder, "MassTransit_CustomerOrderCreated:NomeFila");
+        await _orderRepository.InsertAsync(order);
+
+        await RabbitMqHelper.SendMessageAsync(_sendEndpointProvider, _configuration, order.ToEventModel(), "MassTransit_CustomerOrderCreated:NomeFila");
     }
 
     public async Task CancelOrderAsync(CancellationReasonOrderViewModel requestOrder, OrderViewModel orderFromDB)
     {
         var order = SetData(requestOrder, orderFromDB);
 
-        // Update na base de dados. 
         await _orderRepository.UpdateAsync(order.ToModel());
 
-        // Se gravou com sucesso, colocar a mensagem da fila do rabbitmq
+        // TODO: Faze toEventModel() e passar abaixo onde está o requestOrder.
+
         await RabbitMqHelper.SendMessageAsync(_sendEndpointProvider, _configuration, requestOrder, "MassTransit_CancelOrderByCustomer:NomeFila");
     }
 
@@ -47,6 +48,6 @@ public class OrderService(ISendEndpointProvider sendEndpointProvider, IConfigura
         return orderFromDB;
     }
 
-    public async Task<OrderViewModel?> GetOrderByIdAsync(Guid id)
-        => (await _orderRepository.GetOrderByIdAsync(id))?.ToViewModel();
+    public async Task<OrderViewModel?> GetOrderByCustomerIdAsync(Guid id)
+        => (await _orderRepository.GetOrderByCustomerIdAsync(id))?.ToViewModel();
 }

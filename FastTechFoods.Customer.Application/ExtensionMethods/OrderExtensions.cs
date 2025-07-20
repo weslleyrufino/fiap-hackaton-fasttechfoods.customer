@@ -32,13 +32,14 @@ public static class OrderExtensions
     {
         return new Order
         {
+            Id = Guid.NewGuid(),
             Status = EnumStatus.Pending,
             CustomerId = model.CustomerId,
             CreatedAt = DateTime.Now,
             DeliveryMethod = model.DeliveryMethod,
             Items = model.Items.Select(item => new OrderItem
             {
-                Id = item.Id,
+                Id = Guid.NewGuid(),
                 MenuItemId = item.MenuItemId,
                 Quantity = item.Quantity,
                 UnitPrice = item.UnitPrice
