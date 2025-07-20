@@ -3,5 +3,5 @@
 namespace FastTechFoods.Customer.Application.Interfaces.Services.Authentication;
 public interface IAuthService
 {
-    Task<Employee?> ValidateCredentialsAsync(string email, string password);
+    Task<CustomerEntity?> ValidateCredentialsAsync(string? cpf, string? email, string password);
 }

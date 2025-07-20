@@ -1,6 +1,5 @@
 ﻿using FastTechFoods.Customer.Application.Interfaces.Services.Authentication;
-using FastTechFoods.Customer.Application.ViewModel;
-using FastTechFoods.Customer.Domain.Entities;
+using FastTechFoods.Customer.Application.ViewModel.Login;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FastTechFoods.Customer.API.Controllers;
@@ -18,25 +17,26 @@ public class AuthController(IAuthService authService, IJwtTokenService tokens) :
             return BadRequest(ModelState);
 
         // DADOS ABAIXO SÓ ESTÃO AQUI PARA FACILITAR O TESTE DOS PROFESSORES. ÓBVIAMENTE QUE NÃO FICARIAM EM UM CENÁRIO REAL.
-        
-        // Login Manager
+
+        // Login Joselito
         //{
-        //    "email": "manuel.manager@fasttechfoods.com",
-        //    "password": "Manager123!"
+        //    "email": "joselito@yahoo.com.br",
+        //    "cpf": "69036452090",
+        //    "password": "CustomerJoselito-123!"
         //}
 
-        // Login Attendant
-        //{
-        //    "email": "maria.attendant@fasttechfoods.com",
-        //    "password": "Attendant123!"
+        // Login Maria
+        //    "email": "maria@hotmail.com",
+        //    "cpf": "07187176007",
+        //    "password": "CustomerMaria-123!"
         //}
 
-        var employee = await _authService.ValidateCredentialsAsync(vm.Email, vm.Password);
-        if (employee is null)
-            return Unauthorized("Invalid email or password.");
+        var customer = await _authService.ValidateCredentialsAsync(vm.CPF, vm.Email, vm.Password);
+        if (customer is null)
+            return Unauthorized("Invalid E-mail/CPF or password.");
 
         // TODO: Gerar JWT e retornar aqui.
-        var jwt = _tokens.GenerateToken(employee);
+        var jwt = _tokens.GenerateToken(customer);
 
         return Ok(new { Message = "Successfully authenticated.", token = jwt });
     }

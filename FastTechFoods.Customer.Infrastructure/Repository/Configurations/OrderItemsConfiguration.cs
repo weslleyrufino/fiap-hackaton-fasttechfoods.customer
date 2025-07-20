@@ -9,40 +9,40 @@ public class OrderItemsConfiguration : IEntityTypeConfiguration<OrderItem>
     {
         builder.ToTable("OrderItems");
 
-        builder.HasKey(oi => oi.Id);
+        builder.HasKey(x => x.Id);
 
-        builder.Property(oi => oi.Id)
+        builder.Property(x => x.Id)
                .HasColumnType("UNIQUEIDENTIFIER")
                .HasDefaultValueSql("NEWSEQUENTIALID()");
 
-        builder.Property(oi => oi.MenuItemId)
+        builder.Property(x => x.MenuItemId)
                .HasColumnType("UNIQUEIDENTIFIER")
                .IsRequired();
 
-        builder.Property(oi => oi.OrderId) // 👈 Aqui está o OrderId
+        builder.Property(x => x.OrderId)
                .HasColumnType("UNIQUEIDENTIFIER")
                .IsRequired();
 
-        builder.Property(oi => oi.Quantity)
+        builder.Property(x => x.Quantity)
                .HasColumnType("INT")
                .IsRequired();
 
-        builder.Property(oi => oi.UnitPrice)
+        builder.Property(x => x.UnitPrice)
                .HasColumnType("DECIMAL(10,2)")
                .IsRequired();
 
-        builder.Ignore(oi => oi.Total); // calculado em memória
+        builder.Ignore(x => x.Total); // calculado em memória
 
-        // 🔗 Relacionamento com Order (1:N)
-        builder.HasOne(oi => oi.Order)
+        // Relacionamento com Order (1:N)
+        builder.HasOne(x => x.Order)
                .WithMany(o => o.Items)
-               .HasForeignKey(oi => oi.OrderId)
+               .HasForeignKey(x => x.OrderId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        // 🔗 Relacionamento com MenuItem (N:1)
+        // Relacionamento com MenuItem (N:1)
         builder.HasOne<MenuItem>()
                .WithMany()
-               .HasForeignKey(oi => oi.MenuItemId)
+               .HasForeignKey(x => x.MenuItemId)
                .OnDelete(DeleteBehavior.Restrict);
     }
 }

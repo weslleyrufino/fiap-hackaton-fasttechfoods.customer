@@ -4,7 +4,6 @@ using FastTechFoods.Customer.Application.Interfaces.Services;
 using FastTechFoods.Customer.Application.Services;
 using FastTechFoods.Customer.Infrastructure.Repository;
 using FastTechFoods.Customer.Infrastructure.IoC;
-//using MassTransit;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Prometheus;
@@ -35,7 +34,7 @@ builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 
@@ -108,6 +107,7 @@ builder.Services
         {
             ValidateIssuer = true,
             ValidateAudience = true,
+            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
@@ -121,11 +121,11 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Registra métricas de uso de CPU e mem�ria
+// Registra métricas de uso de CPU e memória
 var cpuUsage = Metrics.CreateGauge("system_cpu_usage_percent", "Current CPU usage percentage.");
 var memoryUsage = Metrics.CreateGauge("system_memory_usage_bytes", "Current memory usage in bytes.");
 
-// Vari�veis para cálculo do uso de CPU
+// Variáveis para cálculo do uso de CPU
 var lastTotalProcessorTime = TimeSpan.Zero;
 var lastTime = DateTime.UtcNow;
 
@@ -167,7 +167,7 @@ app.Use(async (context, next) =>
 // Middleware para medir latência das requisições
 app.Use(async (context, next) =>
 {
-    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+    var stopwatch = Stopwatch.StartNew();
     await next();
     stopwatch.Stop();
     httpDuration
@@ -204,8 +204,12 @@ app.UseExceptionHandler(errorApp =>
 //     app.UseSwaggerUI();
 // }
 //
+app.UseStaticFiles();
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.InjectStylesheet("/swagger-ui/custom.css");
+});
 
 //app.UseHttpsRedirection();
 app.UseAuthentication();

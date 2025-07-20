@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FastTechFoods.Customer.Application.ViewModel.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace FastTechFoods.Customer.Application.ViewModel.MenuItem;
-public class CreateMenuItemViewModel
+public class MenuItemViewModel : ViewModelBase
 {
     [Required(ErrorMessage = "The name is required.")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     [Required(ErrorMessage = "The description is required.")]
     public string Description { get; set; }
@@ -18,4 +19,4 @@ public class CreateMenuItemViewModel
 
     [Required(ErrorMessage = "The availability status is required.")]
     public bool IsAvailable { get; set; }
-}
+ }

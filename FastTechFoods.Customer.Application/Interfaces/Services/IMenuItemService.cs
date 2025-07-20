@@ -3,7 +3,6 @@
 namespace FastTechFoods.Customer.Application.Interfaces.Services;
 public interface IMenuItemService
 {
-    Task CreateMenuItemAsync(CreateMenuItemViewModel menuItem);
-    Task UpdateMenuItemAsync(UpdateMenuItemViewModel menuItem);
+    Task<IEnumerable<MenuItemViewModel>> GetMenuItemAsync(string category);
     Task<bool> ExistsAsync(Guid id);
 }

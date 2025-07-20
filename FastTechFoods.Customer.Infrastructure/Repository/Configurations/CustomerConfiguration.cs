@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FastTechFoods.Customer.Infrastructure.Repository.Configurations;
-internal class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
+internal class CustomerConfiguration : IEntityTypeConfiguration<CustomerEntity>
 {
-    public void Configure(EntityTypeBuilder<Employee> builder)
+    public void Configure(EntityTypeBuilder<CustomerEntity> builder)
     {
-        builder.ToTable("Employees");
+        builder.ToTable("Customers");
 
         builder.HasKey(e => e.Id);
 
@@ -23,13 +23,12 @@ internal class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
                .HasColumnType("VARCHAR(100)")
                .IsRequired();
 
-        builder.Property(e => e.PasswordHash)
-               .HasColumnType("VARCHAR(255)")
+        builder.Property(e => e.CPF)
+               .HasColumnType("VARCHAR(11)")
                .IsRequired();
 
-        builder.Property(e => e.Role)
-               .HasConversion<string>()
-               .HasColumnType("VARCHAR(20)")
+        builder.Property(e => e.PasswordHash)
+               .HasColumnType("VARCHAR(255)")
                .IsRequired();
 
         builder.Property(e => e.CreatedAt)

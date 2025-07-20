@@ -29,6 +29,7 @@ public class OrdersConfiguration : IEntityTypeConfiguration<Order>
                .IsRequired();
 
         builder.Property(o => o.DeliveryMethod)
+                .HasConversion<string>()
                .HasColumnType("VARCHAR(20)")
                .IsRequired();
 
@@ -37,7 +38,7 @@ public class OrdersConfiguration : IEntityTypeConfiguration<Order>
 
         // Relacionamento 1:N com OrderItem
         builder.HasMany(o => o.Items)
-           .WithOne(oi => oi.Order) // 👈 propriedade de navegação correta
+           .WithOne(oi => oi.Order) 
            .HasForeignKey(oi => oi.OrderId)
            .OnDelete(DeleteBehavior.Cascade);
 

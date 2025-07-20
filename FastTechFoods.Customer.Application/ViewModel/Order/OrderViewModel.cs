@@ -12,10 +12,10 @@ public class OrderViewModel : ViewModelBase
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [Required(ErrorMessage = "The order status is required.")]
-    public EnumStatus Status { get; set; } // Ex: "Pending", "Accepted", "Rejected", "Canceled"
+    public EnumStatus Status { get; set; }
 
     [Required(ErrorMessage = "The delivery method is required.")]
-    public string DeliveryMethod { get; set; } // Ex: "Counter", "DriveThru", "Delivery"
+    public EnumDeliveryMethod DeliveryMethod { get; set; }
 
 
     /// <summary>

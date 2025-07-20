@@ -17,8 +17,4 @@
     <ProjectReference Include="..\FastTechFoods.Customer.Domain\FastTechFoods.Customer.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewModel\Employee\" />
-  </ItemGroup>
-
 </Project>

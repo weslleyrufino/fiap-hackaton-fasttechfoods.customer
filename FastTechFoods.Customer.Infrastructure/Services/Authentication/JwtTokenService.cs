@@ -12,13 +12,12 @@ public class JwtTokenService : IJwtTokenService
     private readonly IConfiguration _config;
     public JwtTokenService(IConfiguration config) => _config = config;
 
-    public string GenerateToken(Employee employee)
+    public string GenerateToken(CustomerEntity customerEntity)
     {
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, employee.Id.ToString()),
-            new Claim(ClaimTypes.Email, employee.Email),
-            new Claim(ClaimTypes.Role, employee.Role.ToString())
+            new Claim(JwtRegisteredClaimNames.Sub, customerEntity.Id.ToString()),
+            new Claim(ClaimTypes.Email, customerEntity.Email)
         };
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

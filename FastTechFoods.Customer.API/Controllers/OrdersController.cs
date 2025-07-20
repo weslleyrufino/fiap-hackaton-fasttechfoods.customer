@@ -1,8 +1,13 @@
-﻿using FastTechFoods.Customer.Application.Interfaces.Services;
+﻿using FastTechFoods.Customer.Application.ExtensionMethods;
+using FastTechFoods.Customer.Application.Interfaces.Services;
 using FastTechFoods.Customer.Application.ViewModel.Order;
+using FastTechFoods.Customer.Domain.Entities.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FastTechFoods.Customer.API.Controllers;
+
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class OrdersController(IOrderService orderService, ILogger<OrdersController> logger) : ControllerBase
@@ -10,13 +15,30 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     private readonly IOrderService _orderService = orderService;
     private readonly ILogger<OrdersController> _logger = logger;
 
-    [HttpGet]
-    public async Task<IActionResult> GetOrders()
+    [HttpPost("CreateOrder")]
+    public async Task<IActionResult> PostCreateOrder([FromBody] CreateOrderViewModel orderViewModel)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = await _orderService.GetAllOrdersAsync();
+        await _orderService.CreateOrderAsync(orderViewModel);
+
+        return NoContent();
+
+    }
+
+    [HttpGet("GetOrderById")]
+    public async Task<IActionResult> GetOrderByIdAsync()
+    {
+        var customerId = User.GetCustomerId();
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _orderService.GetOrderByIdAsync(customerId);
+
+        if (result is null)
+            return NotFound("No order found.");
 
         return Ok(result);
     }
@@ -28,14 +50,19 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        bool exists = await _orderService.ExistsAsync(orderViewModel.Id);
+        var orderFromDB = await _orderService.GetOrderByIdAsync(orderViewModel.Id);
 
-        if (!exists)
+        if (orderFromDB is null)
             return NotFound("Order does not exist.");
 
-        await _orderService.UpdateOrderAsync(orderViewModel);
+        if (orderFromDB.Status == EnumStatus.Accepted)
+            return BadRequest("Not possible to cancel the order.");
+
+        await _orderService.UpdateOrderAsync(orderViewModel, orderFromDB);
 
         return NoContent();
 
     }
+
+
 }

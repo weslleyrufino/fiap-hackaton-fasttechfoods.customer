@@ -5,26 +5,19 @@ namespace FastTechFoods.Customer.Application.ExtensionMethods;
 public static class MenuItemExtensions
 {
 
-    public static MenuItem ToModel(this CreateMenuItemViewModel createViewModel)
+    public static MenuItemViewModel ToViewModel(this MenuItem model)
     {
-        return new MenuItem
+        return new MenuItemViewModel
         {
-            Name = createViewModel.Name,
-            Description = createViewModel.Description,
-            Price = createViewModel.Price,
-            Category = createViewModel.Category,
-            IsAvailable = createViewModel.IsAvailable,
-            CreatedAt = DateTime.UtcNow
+           Id = model.Id,
+           Category = model.Category,
+           Description = model.Description,
+           IsAvailable = model.IsAvailable,
+           Name = model.Name,
+           Price = model.Price
         };
     }
 
-    public static void UpdateFrom(this MenuItem entity, UpdateMenuItemViewModel viewModel)
-    {
-        entity.Name = viewModel.Name;
-        entity.Description = viewModel.Description;
-        entity.Price = viewModel.Price;
-        entity.Category = viewModel.Category;
-        entity.IsAvailable = viewModel.IsAvailable;
-        entity.UpdatedAt = DateTime.UtcNow;
-    }
+    public static IEnumerable<MenuItemViewModel> ToViewModel(this IEnumerable<MenuItem> model)
+        => model.Select(model => model.ToViewModel());
 }

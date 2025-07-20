@@ -1,9 +1,9 @@
 ﻿using FastTechFoods.Customer.Application.Interfaces.Services;
-using FastTechFoods.Customer.Application.ViewModel.MenuItem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FastTechFoods.Customer.API.Controllers;
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class MenuItemController(IMenuItemService menuItemService, ILogger<MenuItemController> logger) : ControllerBase
@@ -12,33 +12,18 @@ public class MenuItemController(IMenuItemService menuItemService, ILogger<MenuIt
     private readonly ILogger<MenuItemController> _logger = logger;
 
 
-    [HttpPost, Authorize(Roles = "Manager")]
-    public async Task<IActionResult> PostCreateMenuItem([FromBody] CreateMenuItemViewModel menuItemViewModel)
+    [HttpGet("GetMenuItens/{category}")]
+    public async Task<IActionResult> GetMenuItens(string category)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        await _menuItemService.CreateMenuItemAsync(menuItemViewModel);
+        var result = await _menuItemService.GetMenuItemAsync(category);
 
-        return Created();
+        if (result is null)
+            return NotFound("Menu category not found.");
+
+        return Ok(result);
     }
 
-    [HttpPut, Authorize(Roles = "Manager")]
-    public async Task<IActionResult> PutUpdateMenuItem([FromBody] UpdateMenuItemViewModel menuItemViewModel)
-    {
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        var exists = await _menuItemService.ExistsAsync(menuItemViewModel.Id);
-
-        if (!exists)
-            return NotFound("Menu Item not found.");
-
-
-        await _menuItemService.UpdateMenuItemAsync(menuItemViewModel);
-
-        return NoContent();
-
-    }
 }
