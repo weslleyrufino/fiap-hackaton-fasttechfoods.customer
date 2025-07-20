@@ -7,5 +7,5 @@ public interface IOrderService
     Task<OrderViewModel?> GetOrderByIdAsync(Guid id);
     Task CreateOrderAsync(CreateOrderViewModel requestOrder);
 
-    Task UpdateOrderAsync(UpdateStatusOrderViewModel requestOrder, OrderViewModel orderFromDB);
+    Task CancelOrderAsync(CancellationReasonOrderViewModel requestOrder, OrderViewModel orderFromDB);
 }

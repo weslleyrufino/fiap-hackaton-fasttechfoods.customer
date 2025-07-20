@@ -27,21 +27,21 @@ public class OrderService(ISendEndpointProvider sendEndpointProvider, IConfigura
         await RabbitMqHelper.SendMessageAsync(_sendEndpointProvider, _configuration, requestOrder, "MassTransit_CustomerOrderCreated:NomeFila");
     }
 
-    public async Task UpdateOrderAsync(UpdateStatusOrderViewModel requestOrder, OrderViewModel orderFromDB)
+    public async Task CancelOrderAsync(CancellationReasonOrderViewModel requestOrder, OrderViewModel orderFromDB)
     {
-        var order = await SetData(requestOrder, orderFromDB);
+        var order = SetData(requestOrder, orderFromDB);
 
         // Update na base de dados. 
         await _orderRepository.UpdateAsync(order.ToModel());
 
         // Se gravou com sucesso, colocar a mensagem da fila do rabbitmq
-        await RabbitMqHelper.SendMessageAsync(_sendEndpointProvider, _configuration, requestOrder, "MassTransit_UpdateStatusOrderByCustomer:NomeFila");
+        await RabbitMqHelper.SendMessageAsync(_sendEndpointProvider, _configuration, requestOrder, "MassTransit_CancelOrderByCustomer:NomeFila");
     }
 
-    private async Task<OrderViewModel> SetData(UpdateStatusOrderViewModel requestOrder, OrderViewModel orderFromDB)
+    private OrderViewModel SetData(CancellationReasonOrderViewModel requestOrder, OrderViewModel orderFromDB)
     {
-        // Update order recebido com base no orderViewModel.
-        orderFromDB.Status = requestOrder.Status.ToDomainStatus();
+        // Update order com base no orderFromDB.
+        orderFromDB.Status = EnumStatus.Canceled;
         orderFromDB.CancellationReason = requestOrder.CancellationReason;
 
         return orderFromDB;

@@ -43,8 +43,8 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
         return Ok(result);
     }
 
-    [HttpPatch]
-    public async Task<IActionResult> PatchUpdateStatusOrders([FromBody] UpdateStatusOrderViewModel orderViewModel)
+    [HttpPatch("CancelOrder")]
+    public async Task<IActionResult> CancelOrder([FromBody] CancellationReasonOrderViewModel orderViewModel)
     {
 
         if (!ModelState.IsValid)
@@ -58,7 +58,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
         if (orderFromDB.Status == EnumStatus.Accepted)
             return BadRequest("Not possible to cancel the order.");
 
-        await _orderService.UpdateOrderAsync(orderViewModel, orderFromDB);
+        await _orderService.CancelOrderAsync(orderViewModel, orderFromDB);
 
         return NoContent();
 
