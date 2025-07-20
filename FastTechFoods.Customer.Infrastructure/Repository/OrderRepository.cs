@@ -10,7 +10,7 @@ public class OrderRepository(ApplicationDbContext context) : EFRepository<Order>
         return await _dbSet
             .AsNoTracking()
             .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == id);
+            .FirstOrDefaultAsync(o => o.CustomerId == id);
     }
        
 
@@ -21,4 +21,11 @@ public class OrderRepository(ApplicationDbContext context) : EFRepository<Order>
             .ToListAsync();
     }
 
+    public async Task<Order?> GetOrderByIdAsync(Guid id)
+    {
+        return await _dbSet
+           .AsNoTracking()
+           .Include(o => o.Items)
+           .FirstOrDefaultAsync(o => o.Id == id);
+    }
 }

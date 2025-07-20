@@ -19,9 +19,9 @@ public class OrderService(ISendEndpointProvider sendEndpointProvider, IConfigura
         => await _orderRepository.ExistsAsync(id);
 
 
-    public async Task CreateOrderAsync(CreateOrderViewModel requestOrder)
+    public async Task CreateOrderAsync(Guid customerId, CreateOrderViewModel requestOrder)
     {
-        var order = requestOrder.ToModel();
+        var order = requestOrder.ToModel(customerId);
 
         await _orderRepository.InsertAsync(order);
 
@@ -34,9 +34,7 @@ public class OrderService(ISendEndpointProvider sendEndpointProvider, IConfigura
 
         await _orderRepository.UpdateAsync(order.ToModel());
 
-        // TODO: Faze toEventModel() e passar abaixo onde está o requestOrder.
-
-        await RabbitMqHelper.SendMessageAsync(_sendEndpointProvider, _configuration, requestOrder, "MassTransit_CancelOrderByCustomer:NomeFila");
+        await RabbitMqHelper.SendMessageAsync(_sendEndpointProvider, _configuration, requestOrder.ToEventModel(), "MassTransit_CancelOrderByCustomer:NomeFila");
     }
 
     private OrderViewModel SetData(CancellationReasonOrderViewModel requestOrder, OrderViewModel orderFromDB)
@@ -50,4 +48,9 @@ public class OrderService(ISendEndpointProvider sendEndpointProvider, IConfigura
 
     public async Task<OrderViewModel?> GetOrderByCustomerIdAsync(Guid id)
         => (await _orderRepository.GetOrderByCustomerIdAsync(id))?.ToViewModel();
+
+    
+    public async Task<OrderViewModel?> GetOrderByIdAsync(Guid id)
+        => (await _orderRepository.GetOrderByIdAsync(id))?.ToViewModel();
+    
 }

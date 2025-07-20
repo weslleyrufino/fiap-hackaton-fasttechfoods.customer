@@ -4,7 +4,9 @@ using FastTechFoods.Customer.Domain.Entities.Enum;
 namespace FastTechFoods.Customer.Domain.Entities;
 public class Order : EntityBase
 {
-    public required string CustomerId { get; set; }// string pois pode ser CPF ou email.
+    public required Guid CustomerId { get; set; }// Chave estrangeira
+
+    public CustomerEntity Customer { get; set; } = null!; // Navegação
 
     public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

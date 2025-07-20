@@ -18,10 +18,12 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     [HttpPost("CreateOrder")]
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderViewModel orderViewModel)
     {
+        var customerId = User.GetCustomerId();
+
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        await _orderService.CreateOrderAsync(orderViewModel);
+        await _orderService.CreateOrderAsync(customerId, orderViewModel);
 
         return NoContent();
 
@@ -38,7 +40,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
         var result = await _orderService.GetOrderByCustomerIdAsync(customerId);
 
         if (result is null)
-            return NotFound("No order found.");
+            return NoContent();
 
         return Ok(result);
     }
@@ -50,7 +52,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var orderFromDB = await _orderService.GetOrderByCustomerIdAsync(orderViewModel.Id);
+        var orderFromDB = await _orderService.GetOrderByIdAsync(orderViewModel.Id);
 
         if (orderFromDB is null)
             return NoContent();

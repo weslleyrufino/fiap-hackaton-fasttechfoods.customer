@@ -6,7 +6,7 @@ namespace FastTechFoods.Customer.Application.ViewModel.Order;
 public class OrderViewModel : ViewModelBase
 {
     [Required(ErrorMessage = "The customer ID is required.")]
-    public string CustomerId { get; set; } // string pois pode ser CPF ou email.
+    public Guid CustomerId { get; set; } 
 
     [Required(ErrorMessage = "The order date is required.")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

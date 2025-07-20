@@ -5,4 +5,5 @@ public interface IOrderRepository : IRepository<Order>
 {
     Task<IEnumerable<Order>> GetAllOrdersAsync();
     Task<Order?> GetOrderByCustomerIdAsync(Guid id);
+    Task<Order?> GetOrderByIdAsync(Guid id);
 }

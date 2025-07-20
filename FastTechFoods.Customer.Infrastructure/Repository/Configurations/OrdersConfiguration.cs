@@ -16,7 +16,7 @@ public class OrdersConfiguration : IEntityTypeConfiguration<Order>
                 .HasDefaultValueSql("NEWSEQUENTIALID()");
 
         builder.Property(o => o.CustomerId)
-               .HasColumnType("VARCHAR(50)")
+               .HasColumnType("UNIQUEIDENTIFIER")
                .IsRequired();
 
         builder.Property(o => o.CreatedAt)
@@ -41,6 +41,12 @@ public class OrdersConfiguration : IEntityTypeConfiguration<Order>
            .WithOne(oi => oi.Order) 
            .HasForeignKey(oi => oi.OrderId)
            .OnDelete(DeleteBehavior.Cascade);
+
+        // Relacionamento com CustomerEntity
+        builder.HasOne(o => o.Customer)
+               .WithMany() 
+               .HasForeignKey(o => o.CustomerId)
+               .OnDelete(DeleteBehavior.Restrict);
 
     }
 }

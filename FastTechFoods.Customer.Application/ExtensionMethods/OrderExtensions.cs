@@ -28,13 +28,13 @@ public static class OrderExtensions
     public static IEnumerable<OrderViewModel> ToViewModel(this IEnumerable<Order> model)
         => model.Select(model => model.ToViewModel());
 
-    public static Order ToModel(this CreateOrderViewModel model)
+    public static Order ToModel(this CreateOrderViewModel model, Guid customerId)
     {
         return new Order
         {
             Id = Guid.NewGuid(),
             Status = EnumStatus.Pending,
-            CustomerId = model.CustomerId,
+            CustomerId = customerId,
             CreatedAt = DateTime.Now,
             DeliveryMethod = model.DeliveryMethod,
             Items = model.Items.Select(item => new OrderItem
