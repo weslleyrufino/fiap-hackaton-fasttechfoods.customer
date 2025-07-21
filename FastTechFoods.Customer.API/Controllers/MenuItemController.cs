@@ -12,8 +12,8 @@ public class MenuItemController(IMenuItemService menuItemService, ILogger<MenuIt
     private readonly ILogger<MenuItemController> _logger = logger;
 
 
-    [HttpGet("GetMenuItens/{category}")]
-    public async Task<IActionResult> GetMenuItens(string category)
+    [HttpGet("GetMenuItens")]
+    public async Task<IActionResult> GetMenuItens([FromQuery] string? category)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

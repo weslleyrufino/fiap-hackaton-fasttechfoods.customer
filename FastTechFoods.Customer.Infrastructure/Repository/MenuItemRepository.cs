@@ -5,12 +5,24 @@ using Microsoft.EntityFrameworkCore;
 namespace FastTechFoods.Customer.Infrastructure.Repository;
 public class MenuItemRepository(ApplicationDbContext context) : EFRepository<MenuItem>(context), IMenuItemRepository
 {
-    public async Task<IEnumerable<MenuItem>> GetMenuItemByCategoryAsync(string category)
+    public async Task<IEnumerable<MenuItem>> GetMenuItemByCategoryAsync(string? category)
     {
-        return await _dbSet
-            .Where(
-            x => x.IsAvailable == true &&
-            x.Category == category)
-            .ToListAsync();
+        if (string.IsNullOrWhiteSpace(category))
+        {
+            return await _dbSet
+           .Where(
+           x => x.IsAvailable == true)
+           .ToListAsync();
+        }
+        else
+        {
+            return await _dbSet
+                .Where(
+                x => x.IsAvailable == true &&
+                x.Category == category)
+                .ToListAsync();
+        }
+
+            
     }
 }

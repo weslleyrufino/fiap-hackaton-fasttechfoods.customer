@@ -8,7 +8,7 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
 {
     private readonly IMenuItemRepository _menuItemRepository = menuItemRepository;
 
-    public async Task<IEnumerable<MenuItemViewModel>> GetMenuItemAsync(string category)
+    public async Task<IEnumerable<MenuItemViewModel>> GetMenuItemAsync(string? category)
         => (await _menuItemRepository.GetMenuItemByCategoryAsync(category)).ToViewModel();
 
     public async Task<bool> ExistsAsync(Guid id)
