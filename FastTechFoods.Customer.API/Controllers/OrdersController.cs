@@ -58,7 +58,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
             return NoContent();
 
         if (orderFromDB.Status == EnumStatus.Accepted)
-            return BadRequest("Not possible to cancel the order.");
+            return BadRequest("Order cancellation is not allowed as it has already been accepted by the kitchen.");
 
         await _orderService.CancelOrderAsync(orderViewModel, orderFromDB);
 

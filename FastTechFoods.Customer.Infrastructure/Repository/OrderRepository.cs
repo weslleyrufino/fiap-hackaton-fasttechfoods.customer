@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 namespace FastTechFoods.Customer.Infrastructure.Repository;
 public class OrderRepository(ApplicationDbContext context) : EFRepository<Order>(context), IOrderRepository
 {
-    public async Task<Order?> GetOrderByCustomerIdAsync(Guid id)
+    public async Task<IEnumerable<Order>?> GetOrderByCustomerIdAsync(Guid id)
     {
         return await _dbSet
             .AsNoTracking()
             .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.CustomerId == id);
+            .Where(o => o.CustomerId == id).ToListAsync();
     }
        
 

@@ -46,7 +46,7 @@ public class OrderService(ISendEndpointProvider sendEndpointProvider, IConfigura
         return orderFromDB;
     }
 
-    public async Task<OrderViewModel?> GetOrderByCustomerIdAsync(Guid id)
+    public async Task<IEnumerable<OrderViewModel>?> GetOrderByCustomerIdAsync(Guid id)
         => (await _orderRepository.GetOrderByCustomerIdAsync(id))?.ToViewModel();
 
     
