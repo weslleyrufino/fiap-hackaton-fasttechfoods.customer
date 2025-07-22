@@ -8,8 +8,6 @@ services:
     container_name: customer-api
     ports:
       - "5002:80"
-    depends_on:
-      - rabbitmq
     networks:
       - default
       
@@ -18,8 +16,6 @@ services:
       context: .
       dockerfile: FastTechFoods.Customer.Worker/Dockerfile
     container_name: customer-worker
-    depends_on:
-      - rabbitmq
     networks:
       - default
 
