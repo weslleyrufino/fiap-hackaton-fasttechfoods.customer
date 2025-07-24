@@ -23,6 +23,7 @@ Host.CreateDefaultBuilder(args)
         services.AddMassTransit(x =>
         {
             x.AddConsumer<MenuItemConsumer>();
+            x.AddConsumer<MenuItemUpdateConsumer>();
             x.AddConsumer<AcceptOrRejectOrderByKitchenConsumer>();
 
             x.UsingRabbitMq((context, cfg) =>
@@ -40,11 +41,20 @@ Host.CreateDefaultBuilder(args)
                     e.ConfigureConsumer<MenuItemConsumer>(context);
                 });
 
+                
                 var orderAcceptedOrRejected = configuration.GetSection("MassTransit_AcceptedOrRejectedOrderByKitchen");
                 cfg.ReceiveEndpoint(orderAcceptedOrRejected["NomeFila"], e =>
                 {
                     e.ConfigureConsumer<AcceptOrRejectOrderByKitchenConsumer>(context);
                 });
+
+
+                var updateItemMenu = configuration.GetSection("MassTransit_UpdateItemMenu");
+                cfg.ReceiveEndpoint(updateItemMenu["NomeFila"], e =>
+                {
+                    e.ConfigureConsumer<MenuItemUpdateConsumer>(context);
+                });
+
             });
         });
 
